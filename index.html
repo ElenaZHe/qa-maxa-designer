@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAXA Designer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <img src="./assets/maxa-logo.svg" alt="MAXA Logo">
+            </a>
+            <div class="header-actions">
+                <a href="mailto:owner@example.com" class="support">Support</a>
+                <div class="language-dropdown">
+                    <button class="language-btn">Language</button>
+                    <div class="dropdown-content">
+                        <a href="#" class="language-option active" data-lang="en">English</a>
+                        <a href="#" class="language-option" data-lang="ru">Русский</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome to MAXA Designer.</h1>
+            <p class="welcome-subtitle">Create your own designs with our editor.</p>
+            <button class="create-btn" id="createDesignBtn"> 
+                <img src="./assets/create-design.svg" alt="Create Design" class="create-design-icon"> 
+                <span data-i18n="createDesign">Create Design</span>
+            </button>
+        </div>
+
+        <div class="latest-designs-section">
+            <h2 class="section-title">Latest designs</h2>
+            <div class="designs-container" id="designsContainer">
+                <!-- Designs will be added here dynamically -->
+                <p class="no-designs-message">You have no designs created yet.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="./js/utils.js"></script>
+    <script src="./js/editor.js"></script>
+    <script type='module' src="./js/index.js"></script>
+</body>
+</html>

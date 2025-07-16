@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAXA Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/editor.css">
+</head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<body>
+    <div class="editor-container">
+        <!-- Header -->
+        <header class="editor-header">
+            <div class="header-left">
+                <a href="index.html" class="logo">
+                    <img src="./assets/maxa-logo.svg" alt="MAXA Logo" class="logo-img">
+                </a>
+                <div class="header-actions">
+                    <button id="save-btn" class="header-btn">
+                        <img src="./assets/save.svg" alt="Save">
+                    </button>
+                    <button id="close-btn" class="header-btn">
+                        <img src="./assets/close.svg" alt="Close">
+                    </button>
+                </div>
+                <input type="text" id="design-title" class="design-title-input" value="Design 1">
+                <div class="history-actions">
+                    <button id="undo-btn" class="header-btn">
+                        <img src="./assets/undo.svg" alt="Undo">
+                    </button>
+                    <button id="redo-btn" class="header-btn">
+                        <img src="./assets/redo.svg" alt="Redo">
+                    </button>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="download-wrapper">
+                    <button id="download-btn" class="header-btn">
+                        <img src="./assets/download.svg" alt="Download">
+                    </button>
+                    <div id="download-dropdown" class="dropdown">
+                        <button class="dropdown-item" data-format="png">PNG FORMAT</button>
+                        <button class="dropdown-item" data-format="jpg">JPG FORMAT</button>
+                        <button class="dropdown-item" data-format="pdf">PDF FORMAT</button>
+                    </div>
+                </div>
+                <a href="mailto:owner@example.com" class="support">Support</a>
+                <div class="language-dropdown">
+                    <button class="language-btn">Language</button>
+                    <div class="dropdown-content">
+                        <a href="#" class="language-option active" data-lang="en">English</a>
+                        <a href="#" class="language-option" data-lang="ru">Русский</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="editor-main">
+            <!-- Sidebar Button Bar -->
+            <div class="sidebar-button-bar">
+                <button id="uploads-btn" class="sidebar-btn">
+                    <img src="./assets/uploads.svg" alt="Uploads">
+                </button>
+                <button id="text-btn" class="sidebar-btn">
+                    <img src="./assets/text-ai.svg" alt="Text">
+                </button>
+            </div>
+
+
+            <div class="editor-footer">
+                <div class="zoom-controls">
+                    <button id="zoom-out" class="zoom-btn">-</button>
+                    <span id="zoom-level">100%</span>
+                    <button id="zoom-in" class="zoom-btn">+</button>
+                </div>
+            </div>
+            <!-- Sidebar Content -->
+            <div id="sidebar" class="sidebar">
+                <div id="uploads-content" class="sidebar-content">
+                    <div class="uploads-header">
+                        <h3>Upload Images</h3>
+                        <div class="search-container">
+                            <input type="text" id="image-search" placeholder="Search in my uploads">
+                        </div>
+                    </div>
+                    <div class="uploads-actions">
+                        <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
+                        <button id="import-btn" class="action-btn">Import File</button>
+                        <div class="selection-actions">
+                            <button id="select-all-btn" class="selection-btn">Select All</button>
+                            <button id="delete-selected-btn" class="selection-btn">Delete Selected</button>
+                        </div>
+                    </div>
+                    <div id="uploads-grid" class="uploads-grid">
+                        <!-- Uploaded images will appear here -->
+                    </div>
+                </div>
+                <div id="text-content" class="sidebar-content">
+                    <h3>Add Text</h3>
+                    <textarea id="text-input" placeholder="Enter your text here"></textarea>
+                    <button id="add-text-btn" class="action-btn">Add Text</button>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div id="canvas-container" class="canvas-container">
+                <div id="pages-container" class="pages-container">
+                    <div class="design-page active" data-page="1">
+                        <div class="design-canvas"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Controls -->
+            <div class="right-controls">
+                <button id="add-page" class="control-btn">
+                    <img src="./assets/add-page.svg" alt="Add Page">
+                </button>
+                <button id="delete-page" class="control-btn">
+                    <img src="./assets/delete-page.svg" alt="Delete Page">
+                </button>
+                <button id="display-toggle" class="control-btn">
+                    <img src="./assets/display.svg" alt="Display">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals and Notifications -->
+    <div id="unsaved-modal" class="modal">
+        <div class="modal-content">
+            <h3>Unsaved Changes</h3>
+            <p>You have unsaved changes. Are you sure you want to leave?</p>
+            <div class="modal-buttons">
+                <button id="confirm-leave" class="modal-btn confirm">Leave</button>
+                <button id="cancel-leave" class="modal-btn cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h3>Delete Page</h3>
+            <p>Are you sure you want to delete this page?</p>
+            <div class="modal-buttons">
+                <button id="confirm-delete" class="modal-btn confirm">Delete</button>
+                <button id="cancel-delete" class="modal-btn cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        Design saved successfully!
+    </div>
+
+    <div id="save-animation" class="save-animation">
+        <p>save design</p>
+        <div class="dot-animation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <script src="./js/utils.js"></script>
+    <script src="./js/editor.js"></script>
+    <script type='module' src="./js/index.js"></script>
+</body>
+</html>
