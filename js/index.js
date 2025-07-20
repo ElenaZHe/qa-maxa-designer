@@ -65,38 +65,49 @@ function setupCreateDesignButton() {
 
 // Language switcher setup
 function setupLanguageSwitcher() {
-    if (!elements.languageBtn || !elements.dropdownContent) return;
+    const languageDropdown = document.querySelector('.language-dropdown');
+    if (!languageDropdown) return;
+
+    const languageBtn = languageDropdown.querySelector('.language-btn');
+    const dropdownContent = languageDropdown.querySelector('.dropdown-content');
     
-    const updateActiveLanguage = () => {
-        const currentLang = i18n.currentLanguage;
-        document.querySelectorAll('.language-option').forEach(option => {
-            option.classList.toggle('active', option.dataset.lang === currentLang);
+    // Инициализация текущего языка
+    const updateLanguageButton = () => {
+        languageBtn.textContent = i18n.currentLanguage === 'en' ? 'English' : 'Русский';
+        dropdownContent.querySelectorAll('.language-option').forEach(option => {
+            option.classList.toggle('active', option.dataset.lang === i18n.currentLanguage);
         });
-        elements.languageBtn.textContent = currentLang === 'en' ? 'English' : 'Русский';
     };
-    
-    elements.languageBtn.addEventListener('click', (e) => {
+
+    // Обработчик клика по кнопке языка
+    languageBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        elements.dropdownContent.style.display = 
-            elements.dropdownContent.style.display === 'block' ? 'none' : 'block';
+        const isHidden = dropdownContent.style.display !== 'block';
+        dropdownContent.style.display = isHidden ? 'block' : 'none';
     });
-    
-    document.querySelectorAll('.language-option').forEach(option => {
+
+    // Обработчик выбора языка
+    dropdownContent.querySelectorAll('.language-option').forEach(option => {
         option.addEventListener('click', (e) => {
             e.preventDefault();
-            const lang = e.target.dataset.lang;
-            if (lang && i18n.setLanguage(lang)) {
-                elements.dropdownContent.style.display = 'none';
-                updateActiveLanguage();
+            const lang = e.currentTarget.dataset.lang;
+            if (lang && lang !== i18n.currentLanguage) {
+                i18n.setLanguage(lang);
+                location.reload(); // Добавлено обновление страницы
             }
+            dropdownContent.style.display = 'none';
         });
     });
-    
-    document.addEventListener('click', () => {
-        elements.dropdownContent.style.display = 'none';
+
+    // Закрытие при клике вне дропдауна
+    document.addEventListener('click', (e) => {
+        if (!languageDropdown.contains(e.target)) {
+            dropdownContent.style.display = 'none';
+        }
     });
-    
-    updateActiveLanguage();
+
+    // Инициализация при загрузке
+    updateLanguageButton();
 }
 
 // Render designs list
@@ -182,6 +193,7 @@ function checkForNewDesign() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+   i18n.applyTranslations();
     init();
 });
 
